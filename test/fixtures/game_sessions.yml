@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  game: one
+  session_token: MyString
+  score: 1
+  duration_played: 1
+  completed: false
+  started_at: 2025-12-26 11:01:34
+  ended_at: 2025-12-26 11:01:34
+
+two:
+  user: two
+  game: two
+  session_token: MyString
+  score: 1
+  duration_played: 1
+  completed: false
+  started_at: 2025-12-26 11:01:34
+  ended_at: 2025-12-26 11:01:34
