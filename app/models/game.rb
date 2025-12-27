@@ -3,6 +3,8 @@ class Game < ApplicationRecord
   belongs_to :creator, class_name: "User", optional: true
   has_many :votes, dependent: :destroy
   has_many :reports, dependent: :destroy
+  has_many :game_tags, dependent: :destroy
+  has_many :tags, through: :game_tags
 
   # Enums - convert string fields to enums for better handling
   enum :game_type, {

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_12_27_031752) do
+ActiveRecord::Schema[7.1].define(version: 2025_12_27_034123) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -31,6 +31,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_27_031752) do
     t.index ["user_id", "game_id"], name: "index_game_sessions_on_user_id_and_game_id"
     t.index ["user_id", "score"], name: "index_game_sessions_on_user_id_and_score"
     t.index ["user_id"], name: "index_game_sessions_on_user_id"
+  end
+
+  create_table "game_tags", force: :cascade do |t|
+    t.bigint "game_id", null: false
+    t.bigint "tag_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id", "tag_id"], name: "index_game_tags_on_game_id_and_tag_id", unique: true
+    t.index ["game_id"], name: "index_game_tags_on_game_id"
+    t.index ["tag_id"], name: "index_game_tags_on_tag_id"
   end
 
   create_table "games", force: :cascade do |t|
@@ -86,6 +96,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_27_031752) do
     t.index ["user_id"], name: "index_reports_on_user_id"
   end
 
+  create_table "tags", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.string "color", default: "#666666"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_tags_on_name", unique: true
+    t.index ["slug"], name: "index_tags_on_slug", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", null: false
     t.string "username", null: false
@@ -114,6 +134,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_27_031752) do
 
   add_foreign_key "game_sessions", "games"
   add_foreign_key "game_sessions", "users"
+  add_foreign_key "game_tags", "games"
+  add_foreign_key "game_tags", "tags"
   add_foreign_key "games", "users", column: "creator_id"
   add_foreign_key "reports", "games"
   add_foreign_key "reports", "users"
