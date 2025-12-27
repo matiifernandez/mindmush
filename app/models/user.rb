@@ -5,6 +5,7 @@ class User < ApplicationRecord
 
   # Associations
   has_many :created_games, class_name: "Game", foreign_key: "creator_id", dependent: :nullify
+  has_many :votes, dependent: :destroy
 
   # Validations
   validates :email, presence: true, uniqueness: {case_sensitive: false}, format: {with: URI::MailTo::EMAIL_REGEXP}

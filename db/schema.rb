@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_12_26_020134) do
+ActiveRecord::Schema[7.1].define(version: 2025_12_27_030345) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -83,7 +83,21 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_26_020134) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  create_table "votes", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "game_id", null: false
+    t.integer "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id", "value"], name: "index_votes_on_game_id_and_value"
+    t.index ["game_id"], name: "index_votes_on_game_id"
+    t.index ["user_id", "game_id"], name: "index_votes_on_user_id_and_game_id", unique: true
+    t.index ["user_id"], name: "index_votes_on_user_id"
+  end
+
   add_foreign_key "game_sessions", "games"
   add_foreign_key "game_sessions", "users"
   add_foreign_key "games", "users", column: "creator_id"
+  add_foreign_key "votes", "games"
+  add_foreign_key "votes", "users"
 end
