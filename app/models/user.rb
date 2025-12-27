@@ -2,6 +2,7 @@ class User < ApplicationRecord
   # Authentication
   has_secure_password
   has_many :game_sessions, dependent: :nullify
+  has_many :reports, dependent: :destroy
 
   # Associations
   has_many :created_games, class_name: "Game", foreign_key: "creator_id", dependent: :nullify

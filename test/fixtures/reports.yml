@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  game: one
+  reason: MyString
+  description: MyText
+  status: MyString
+  reviewed_by: one
+  reviewed_at: 2025-12-27 12:17:52
+
+two:
+  user: two
+  game: two
+  reason: MyString
+  description: MyText
+  status: MyString
+  reviewed_by: two
+  reviewed_at: 2025-12-27 12:17:52

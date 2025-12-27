@@ -2,6 +2,7 @@ class Game < ApplicationRecord
   # Associations
   belongs_to :creator, class_name: "User", optional: true
   has_many :votes, dependent: :destroy
+  has_many :reports, dependent: :destroy
 
   # Enums - convert string fields to enums for better handling
   enum :game_type, {

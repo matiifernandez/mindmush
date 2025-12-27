@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_12_27_030345) do
+ActiveRecord::Schema[7.1].define(version: 2025_12_27_031752) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -69,6 +69,23 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_27_030345) do
     t.index ["survival_score"], name: "index_games_on_survival_score"
   end
 
+  create_table "reports", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "game_id", null: false
+    t.string "reason", null: false
+    t.text "description"
+    t.string "status", default: "pending"
+    t.bigint "reviewed_by_id"
+    t.datetime "reviewed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id", "status"], name: "index_reports_on_game_id_and_status"
+    t.index ["game_id"], name: "index_reports_on_game_id"
+    t.index ["reviewed_by_id"], name: "index_reports_on_reviewed_by_id"
+    t.index ["status"], name: "index_reports_on_status"
+    t.index ["user_id"], name: "index_reports_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", null: false
     t.string "username", null: false
@@ -98,6 +115,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_27_030345) do
   add_foreign_key "game_sessions", "games"
   add_foreign_key "game_sessions", "users"
   add_foreign_key "games", "users", column: "creator_id"
+  add_foreign_key "reports", "games"
+  add_foreign_key "reports", "users"
+  add_foreign_key "reports", "users", column: "reviewed_by_id"
   add_foreign_key "votes", "games"
   add_foreign_key "votes", "users"
 end
