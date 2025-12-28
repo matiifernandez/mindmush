@@ -72,3 +72,4 @@ end
 # Custom added
 
 gem "ostruct"
+gem "devise" # Authentication
