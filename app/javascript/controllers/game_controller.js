@@ -8,7 +8,6 @@ export default class extends Controller {
   };
 
   connect() {
-    console.log("Game controller connected!");
     this.ctx = this.canvasTarget.getContext("2d");
     this.currentGame = null;
     this.isRunning = false;
@@ -101,12 +100,12 @@ export default class extends Controller {
     this.ctx.fillStyle = "#e94560";
     this.ctx.font = "bold 32px Arial";
     this.ctx.textAlign = "center";
-    this.ctx.fillText("¡Fin del juego!", 200, 170);
+    this.ctx.fillText("Game Over", 200, 170);
     this.ctx.fillStyle = "#ffffff";
     this.ctx.font = "24px Arial";
     this.ctx.fillText(`Score: ${finalScore}`, 200, 220);
     this.ctx.font = "16px Arial";
-    this.ctx.fillText("Presiona REINICIAR para jugar de nuevo", 200, 270);
+    this.ctx.fillText("Press RESTART to play again", 200, 270);
 
     // TODO: Save score to backend
     this.saveScore(finalScore);
@@ -123,8 +122,34 @@ export default class extends Controller {
   }
 
   async saveScore(score) {
-    // For now, just log, later we implement the endpoint
-    console.log(`Score to save: ${score} for game ${this.idValue}`);
+    try {
+      // Get CSRF token from meta tag
+      const csrfToken = document.querySelector(
+        'meta[name="csrf-token"]'
+      )?.content;
+      const response = await fetch(`/games/${this.idValue}/play`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": csrfToken,
+        },
+        body: JSON.stringify({
+          score: score,
+          duration: this.currentGame?.config?.duration || 0,
+          completed: true,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        console.log("Score saved!", data);
+      } else {
+        console.error("Error saving score:", data.errors);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
   }
 
   disconnect() {

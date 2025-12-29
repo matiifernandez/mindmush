@@ -8,6 +8,9 @@ Rails.application.routes.draw do
     collection do
       get :random
     end
+    member do
+      post :play # Creates a new game session / saves the score
+    end
   end
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
