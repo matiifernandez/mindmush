@@ -1,30 +1,3 @@
-const CACHE_NAME = "mindmush-v1";
-const urlsToCache = ["/", "/manifest.json", "/icon-192.png", "/icon-512.png"];
-
-// Install - cache assets
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
-  );
-  self.skipWaiting();
-});
-
-// Activate - clean old caches
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
-  self.clients.claim();
-});
-
 // Fetch - network first, fallback to cache (only for GET requests)
 self.addEventListener("fetch", (event) => {
   // Skip non-GET requests
@@ -46,7 +19,10 @@ self.addEventListener("fetch", (event) => {
       })
       .catch(() => {
         // Fallback to cache if network fails
-        return caches.match(event.request);
+        return caches.match(event.request).then((cachedResponse) => {
+          // Return cached response or a simple error response
+          return cachedResponse || new Response("Offline", { status: 503 });
+        });
       })
   );
 });
