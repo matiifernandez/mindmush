@@ -81,15 +81,17 @@
 
         <% if report.status_pending? %>
           <div class="flex items-center gap-3 pt-4 border-t border-slate-700">
-            <%= button_to dismiss_admin_report_path(report), method: :post, class: "px-4 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 transition" do %>
+            <%= button_to dismiss_admin_report_path(report), method: :post, class: "px-4 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 transition cursor-pointer" do %>
               Dismiss Report
             <% end %>
 
-            <%= button_to action_taken_admin_report_path(report), method: :post, class: "px-4 py-2 bg-amber-500/20 text-amber-400 rounded-lg hover:bg-amber-500/30 transition" do %>
+            <%= button_to action_taken_admin_report_path(report), method: :post, class: "px-4 py-2 bg-amber-500/20 text-amber-400 rounded-lg hover:bg-amber-500/30 transition cursor-pointer" do %>
               Mark as Actioned
             <% end %>
 
-            <%= button_to action_taken_admin_report_path(report, archive_game: "1"), method: :post, data: { turbo_confirm: "Archive '#{report.game.title}' and mark report as actioned?" }, class: "px-4 py-2 bg-rose-500/20 text-rose-400 rounded-lg hover:bg-rose-500/30 transition" do %>
+            <%= button_to action_taken_admin_report_path(report, archive_game: "1"), method: :post,
+                data: { controller: "confirm", confirm_message_value: "Archive '#{report.game.title}' and mark report as actioned?" },
+                class: "px-4 py-2 bg-rose-500/20 text-rose-400 rounded-lg hover:bg-rose-500/30 transition cursor-pointer" do %>
               Archive Game
             <% end %>
           </div>

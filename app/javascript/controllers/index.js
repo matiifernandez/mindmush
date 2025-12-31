@@ -15,3 +15,6 @@ application.register("generator", GeneratorController);
 
 import FlashController from "./flash_controller";
 application.register("flash", FlashController);
+
+import ConfirmController from "./confirm_controller";
+application.register("confirm", ConfirmController);
