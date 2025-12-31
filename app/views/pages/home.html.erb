@@ -1,13 +1,102 @@
-<div class="container mx-auto p-8">
-  <h1 class="text-4xl font-bold mb-4">Welcome to Mindmush 🧠</h1>
+<%# Hero Section with gradient background %>
+<div class="relative overflow-hidden">
+  <%# Background gradient %>
+  <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-violet-950/50 to-slate-900"></div>
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-rose-500/10 via-transparent to-transparent"></div>
 
-  <% if user_signed_in? %>
-    <p class="mb-4">Hi, <strong><%= current_user.username %></strong>!</p>
-    <p class="mb-2">Email: <%= current_user.email %></p>
-    <%= link_to "Log out", destroy_user_session_path, data: { turbo_method: :delete }, class: "text-red-500 underline" %>
+  <div class="relative container mx-auto px-4 py-20 text-center">
+    <h1 class="text-6xl font-bold mb-6">
+      <span class="bg-gradient-to-r from-rose-400 via-fuchsia-400 to-violet-400 bg-clip-text text-transparent">
+        MindMush
+      </span>
+      <span class="ml-2">🧠</span>
+    </h1>
+    <p class="text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
+      Play AI-generated mini games or create your own with just a description.
+      <span class="text-slate-400">Quick, fun, and endless variety.</span>
+    </p>
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+      <%= link_to random_games_path, class: "group px-8 py-4 bg-gradient-to-r from-rose-500 to-rose-600 text-white text-lg font-semibold rounded-xl hover:from-rose-600 hover:to-rose-700 transition-all hover:scale-105 shadow-lg shadow-rose-500/25" do %>
+        <span class="group-hover:animate-bounce inline-block mr-2">🎲</span> Play Random Game
+      <% end %>
+      <% if user_signed_in? %>
+        <%= link_to generator_path, class: "px-8 py-4 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white text-lg font-semibold rounded-xl hover:from-violet-600 hover:to-fuchsia-600 transition-all hover:scale-105 shadow-lg shadow-violet-500/25" do %>
+          ✨ Create a Game
+        <% end %>
+      <% else %>
+        <%= link_to new_user_registration_path, class: "px-8 py-4 bg-slate-800 text-slate-200 text-lg font-semibold rounded-xl hover:bg-slate-700 transition-all border border-slate-700" do %>
+          Sign up to Create
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<%# Stats Section %>
+<div class="bg-slate-900/50 border-y border-slate-800">
+  <div class="container mx-auto px-4 py-10">
+    <div class="grid grid-cols-3 gap-6">
+      <div class="text-center p-6 rounded-2xl bg-slate-800/50 border border-slate-700/50">
+        <div class="text-4xl mb-2">🎮</div>
+        <div class="text-3xl font-bold text-rose-400"><%= Game.status_approved.count %></div>
+        <div class="text-slate-400 text-sm font-medium mt-1">Games</div>
+      </div>
+      <div class="text-center p-6 rounded-2xl bg-slate-800/50 border border-slate-700/50">
+        <div class="text-4xl mb-2">👥</div>
+        <div class="text-3xl font-bold text-violet-400"><%= User.count %></div>
+        <div class="text-slate-400 text-sm font-medium mt-1">Players</div>
+      </div>
+      <div class="text-center p-6 rounded-2xl bg-slate-800/50 border border-slate-700/50">
+        <div class="text-4xl mb-2">🏆</div>
+        <div class="text-3xl font-bold text-emerald-400"><%= number_with_delimiter(GameSession.count) %></div>
+        <div class="text-slate-400 text-sm font-medium mt-1">Games Played</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# Popular Games %>
+<div class="container mx-auto px-4 py-16">
+  <div class="flex justify-between items-center mb-8">
+    <h2 class="text-2xl font-bold text-slate-100">🔥 Popular Games</h2>
+    <%= link_to games_path, class: "text-rose-400 hover:text-rose-300 transition font-medium" do %>
+      View all <span class="ml-1">→</span>
+    <% end %>
+  </div>
+
+  <% @games = Game.status_approved.order(play_count: :desc).limit(6) %>
+
+  <% if @games.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @games.each do |game| %>
+        <%= link_to game_path(game.slug), class: "group block bg-slate-800/50 rounded-2xl p-5 border border-slate-700/50 hover:border-rose-500/50 hover:bg-slate-800 transition-all" do %>
+          <h3 class="text-lg font-semibold text-slate-100 mb-2 group-hover:text-rose-400 transition"><%= game.title %></h3>
+          <p class="text-slate-400 text-sm mb-4 line-clamp-2"><%= game.description.presence || "No description" %></p>
+
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-amber-400"><%= "⭐" * game.difficulty %></span>
+            <span class="text-slate-500">▶ <%= game.play_count %></span>
+          </div>
+
+          <div class="flex items-center gap-4 mt-3 pt-3 border-t border-slate-700/50 text-sm">
+            <span class="text-emerald-400">👍 <%= game.likes_count %></span>
+            <span class="text-rose-400">👎 <%= game.dislikes_count %></span>
+            <% if game.creator %>
+              <span class="text-slate-500 ml-auto">by <span class="text-slate-400"><%= game.creator.username %></span></span>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
   <% else %>
-    <p class="mb-4">You are not logged in</p>
-    <%= link_to "Log in", new_user_session_path, class: "text-blue-500 underline mr-4" %>
-    <%= link_to "Sign up", new_user_registration_path, class: "text-green-500 underline" %>
+    <div class="text-center py-16 bg-slate-800/30 rounded-2xl border border-slate-700/50">
+      <div class="text-5xl mb-4">🎮</div>
+      <p class="text-slate-400 text-lg mb-6">No games yet. Be the first to create one!</p>
+      <% if user_signed_in? %>
+        <%= link_to generator_path, class: "inline-block px-6 py-3 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-semibold rounded-xl hover:from-violet-600 hover:to-fuchsia-600 transition-all" do %>
+          ✨ Create the first game
+        <% end %>
+      <% end %>
+    </div>
   <% end %>
 </div>
