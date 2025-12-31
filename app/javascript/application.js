@@ -2,16 +2,24 @@
 import "@hotwired/turbo-rails";
 import "./controllers";
 
-// Register Service Worker
+// Service Worker disabled temporarily for development
+// TODO: Re-enable for production
+// if ("serviceWorker" in navigator) {
+//   window.addEventListener("load", () => {
+//     navigator.serviceWorker
+//       .register("/service-worker.js")
+//       .then((registration) => {
+//         console.log("SW registered:", registration.scope);
+//       })
+//       .catch((error) => {
+//         console.log("SW registration failed:", error);
+//       });
+//   });
+// }
+
+// Unregister any existing service workers
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("/service-worker.js")
-      .then((registration) => {
-        console.log("SW registered:", registration.scope);
-      })
-      .catch((error) => {
-        console.log("SW registration failed:", error);
-      });
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    registrations.forEach((registration) => registration.unregister());
   });
 }

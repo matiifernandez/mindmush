@@ -74,3 +74,4 @@ end
 gem "ostruct"
 gem "devise" # Authentication
 gem "http"  # HTTP client for external API calls
+gem "simple_form" # Form builder

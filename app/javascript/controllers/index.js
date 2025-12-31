@@ -9,3 +9,6 @@ application.register("hello", HelloController);
 
 import GameController from "./game_controller";
 application.register("game", GameController);
+
+import GeneratorController from "./generator_controller";
+application.register("generator", GeneratorController);
