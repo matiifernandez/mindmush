@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       post :play # Creates a new game session / saves the score
       post :vote # Like or dislike a game
       delete :vote, action: :unvote # Remove vote
+      post :report # Report a game
     end
   end
 

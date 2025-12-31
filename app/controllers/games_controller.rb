@@ -1,7 +1,7 @@
 class GamesController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:play]
-  before_action :authenticate_user!, only: [:vote, :unvote]
-  before_action :set_game, only: [:show, :vote, :unvote]
+  before_action :authenticate_user!, only: [:vote, :unvote, :report]
+  before_action :set_game, only: [:show, :vote, :unvote, :report]
 
   def index
     @games = Game.status_approved.order(play_count: :desc).limit(20)
@@ -12,6 +12,7 @@ class GamesController < ApplicationController
                               .includes(:user)
                               .limit(10)
     @user_vote = current_user&.votes&.find_by(game: @game)
+    @user_report = current_user&.reports&.find_by(game: @game)
   end
 
   def random
@@ -83,6 +84,33 @@ class GamesController < ApplicationController
   def unvote
     current_user.votes.find_by(game: @game)&.destroy
     redirect_to game_path(@game.slug), notice: "Vote removed"
+  end
+
+  def report
+    reason = params[:reason]
+
+    unless Report.reasons.keys.include?(reason)
+      redirect_to game_path(@game.slug), alert: "Invalid report reason"
+      return
+    end
+
+    existing_report = current_user.reports.find_by(game: @game)
+
+    if existing_report
+      redirect_to game_path(@game.slug), alert: "You have already reported this game"
+    else
+      report = current_user.reports.build(
+        game: @game,
+        reason: reason,
+        description: params[:description]
+      )
+
+      if report.save
+        redirect_to game_path(@game.slug), notice: "Report submitted. Thank you for helping keep MindMush safe!"
+      else
+        redirect_to game_path(@game.slug), alert: report.errors.full_messages.join(", ")
+      end
+    end
   end
 
   private
