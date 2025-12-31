@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   devise_for :users
 
+  # User profiles
+  get "profile", to: "profiles#show", as: :my_profile
+  get "u/:username", to: "profiles#show", as: :user_profile
+
   root "pages#home"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

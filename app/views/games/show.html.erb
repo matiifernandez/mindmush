@@ -75,10 +75,10 @@
             <span class="text-slate-200 ml-1"><%= @game.duration %>s</span>
           </span>
           <% if @game.creator %>
-            <span class="bg-slate-700/50 px-3 py-1.5 rounded-lg">
+            <%= link_to user_profile_path(@game.creator.username), class: "bg-slate-700/50 px-3 py-1.5 rounded-lg hover:bg-slate-600/50 transition" do %>
               <span class="text-slate-400">Created by:</span>
               <span class="text-violet-400 ml-1"><%= @game.creator.username %></span>
-            </span>
+            <% end %>
           <% end %>
         </div>
         <% if @game.description.present? %>
@@ -101,7 +101,7 @@
                   <span class="text-lg <%= index == 0 ? 'text-amber-400' : index == 1 ? 'text-slate-300' : index == 2 ? 'text-amber-600' : 'text-slate-500' %>">
                     <%= index == 0 ? '🥇' : index == 1 ? '🥈' : index == 2 ? '🥉' : "#{index + 1}." %>
                   </span>
-                  <span class="text-slate-200 font-medium"><%= entry.user.username %></span>
+                  <%= link_to entry.user.username, user_profile_path(entry.user.username), class: "text-slate-200 font-medium hover:text-violet-400 transition" %>
                 </span>
                 <span class="font-bold text-rose-400"><%= number_with_delimiter(entry.best_score) %></span>
               </li>
