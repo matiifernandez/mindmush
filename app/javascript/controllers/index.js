@@ -12,3 +12,6 @@ application.register("game", GameController);
 
 import GeneratorController from "./generator_controller";
 application.register("generator", GeneratorController);
+
+import FlashController from "./flash_controller";
+application.register("flash", FlashController);

@@ -15,4 +15,8 @@ class User < ApplicationRecord
                       length: { minimum: 3, maximum: 20 },
                       format: { with: /\A[a-zA-Z0-9_]+\z/,
                                 message: "only allows letters, numbers, and underscores" }
+
+  def admin?
+    admin
+  end
 end

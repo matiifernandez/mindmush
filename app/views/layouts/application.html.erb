@@ -38,6 +38,11 @@
             <% end %>
 
             <% if user_signed_in? %>
+              <% if current_user.admin? %>
+                <%= link_to admin_dashboard_path, class: "text-amber-400 hover:text-amber-300 transition px-3 py-2 rounded-lg hover:bg-slate-800" do %>
+                  ⚙️ Admin
+                <% end %>
+              <% end %>
               <%= link_to generator_path, class: "px-4 py-2 bg-gradient-to-r from-rose-500 to-violet-500 text-white font-medium rounded-lg hover:from-rose-600 hover:to-violet-600 transition-all hover:scale-105" do %>
                 ✨ Create
               <% end %>
@@ -64,17 +69,33 @@
       </nav>
     </header>
 
-    <%# Flash Messages %>
-    <% if notice.present? %>
-      <div class="bg-emerald-500/90 text-white px-4 py-3 text-center font-medium">
-        <%= notice %>
-      </div>
-    <% end %>
-    <% if alert.present? %>
-      <div class="bg-rose-500/90 text-white px-4 py-3 text-center font-medium">
-        <%= alert %>
-      </div>
-    <% end %>
+    <%# Flash Messages Container %>
+    <div class="fixed top-20 right-4 z-50 flex flex-col gap-3 max-w-sm">
+      <% if notice.present? %>
+        <div data-controller="flash" data-flash-delay-value="4000"
+             class="flex items-center gap-3 bg-emerald-500 text-white px-4 py-3 rounded-xl shadow-lg shadow-emerald-500/20">
+          <span class="text-xl">✓</span>
+          <p class="flex-1 font-medium"><%= notice %></p>
+          <button data-action="click->flash#dismiss" class="text-white/80 hover:text-white transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      <% end %>
+      <% if alert.present? %>
+        <div data-controller="flash" data-flash-delay-value="6000"
+             class="flex items-center gap-3 bg-rose-500 text-white px-4 py-3 rounded-xl shadow-lg shadow-rose-500/20">
+          <span class="text-xl">!</span>
+          <p class="flex-1 font-medium"><%= alert %></p>
+          <button data-action="click->flash#dismiss" class="text-white/80 hover:text-white transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      <% end %>
+    </div>
 
     <%# Main Content %>
     <main class="flex-1">

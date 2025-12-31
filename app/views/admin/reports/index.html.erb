@@ -1,0 +1,107 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-3xl font-bold">
+      <span class="text-rose-400">Manage</span> Reports
+    </h1>
+    <%= link_to admin_dashboard_path, class: "text-slate-400 hover:text-white transition" do %>
+      &larr; Back to Dashboard
+    <% end %>
+  </div>
+
+  <%# Filters %>
+  <div class="flex gap-2 mb-6">
+    <%= link_to "All", admin_reports_path,
+        class: "px-4 py-2 rounded-lg transition #{params[:status].blank? ? 'bg-violet-500 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}" %>
+    <% Report.statuses.keys.each do |status| %>
+      <%= link_to status.capitalize, admin_reports_path(status: status),
+          class: "px-4 py-2 rounded-lg transition #{params[:status] == status ? 'bg-violet-500 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}" %>
+    <% end %>
+  </div>
+
+  <%# Reports List %>
+  <div class="space-y-4">
+    <% @reports.each do |report| %>
+      <div class="bg-slate-800/50 rounded-xl border border-slate-700 p-6">
+        <div class="flex items-start justify-between mb-4">
+          <div>
+            <div class="flex items-center gap-3 mb-2">
+              <span class="px-2 py-1 text-xs rounded-full
+                <%= case report.reason
+                    when 'inappropriate' then 'bg-amber-500/20 text-amber-400'
+                    when 'broken' then 'bg-blue-500/20 text-blue-400'
+                    when 'offensive' then 'bg-rose-500/20 text-rose-400'
+                    when 'spam' then 'bg-purple-500/20 text-purple-400'
+                    else 'bg-slate-500/20 text-slate-400'
+                    end %>">
+                <%= report.reason %>
+              </span>
+              <span class="px-2 py-1 text-xs rounded-full
+                <%= case report.status
+                    when 'pending' then 'bg-amber-500/20 text-amber-400'
+                    when 'reviewed' then 'bg-blue-500/20 text-blue-400'
+                    when 'actioned' then 'bg-emerald-500/20 text-emerald-400'
+                    when 'dismissed' then 'bg-slate-500/20 text-slate-400'
+                    else 'bg-slate-500/20 text-slate-400'
+                    end %>">
+                <%= report.status %>
+              </span>
+            </div>
+            <h3 class="text-lg font-medium text-white">
+              <%= link_to report.game.title, game_path(report.game.slug), target: "_blank", class: "hover:text-violet-400 transition" %>
+            </h3>
+            <div class="text-sm text-slate-400 mt-1">
+              Reported by <span class="text-slate-300"><%= report.user.username %></span>
+              <span class="mx-1">•</span>
+              <%= time_ago_in_words(report.created_at) %> ago
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <%= link_to game_path(report.game.slug), target: "_blank", class: "px-3 py-1.5 text-sm bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 transition" do %>
+              View Game
+            <% end %>
+          </div>
+        </div>
+
+        <% if report.description.present? %>
+          <div class="bg-slate-900/50 rounded-lg p-4 mb-4">
+            <div class="text-sm text-slate-400 mb-1">Report Details:</div>
+            <div class="text-slate-200"><%= report.description %></div>
+          </div>
+        <% end %>
+
+        <% if report.reviewed_by.present? %>
+          <div class="text-sm text-slate-500 mb-4">
+            Reviewed by <%= report.reviewed_by.username %>
+            <% if report.reviewed_at.present? %>
+              on <%= report.reviewed_at.strftime("%b %d, %Y at %H:%M") %>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if report.status_pending? %>
+          <div class="flex items-center gap-3 pt-4 border-t border-slate-700">
+            <%= button_to dismiss_admin_report_path(report), method: :post, class: "px-4 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 transition" do %>
+              Dismiss Report
+            <% end %>
+
+            <%= button_to action_taken_admin_report_path(report), method: :post, class: "px-4 py-2 bg-amber-500/20 text-amber-400 rounded-lg hover:bg-amber-500/30 transition" do %>
+              Mark as Actioned
+            <% end %>
+
+            <%= button_to action_taken_admin_report_path(report, archive_game: "1"), method: :post, data: { turbo_confirm: "Archive '#{report.game.title}' and mark report as actioned?" }, class: "px-4 py-2 bg-rose-500/20 text-rose-400 rounded-lg hover:bg-rose-500/30 transition" do %>
+              Archive Game
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if @reports.empty? %>
+      <div class="bg-slate-800/50 rounded-xl border border-slate-700 p-12 text-center">
+        <div class="text-4xl mb-4">&#x2714;</div>
+        <div class="text-slate-400">No reports to review</div>
+      </div>
+    <% end %>
+  </div>
+</div>

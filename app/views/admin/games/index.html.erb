@@ -1,0 +1,112 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-3xl font-bold">
+      <span class="text-rose-400">Manage</span> Games
+    </h1>
+    <%= link_to admin_dashboard_path, class: "text-slate-400 hover:text-white transition" do %>
+      &larr; Back to Dashboard
+    <% end %>
+  </div>
+
+  <%# Filters %>
+  <div class="flex gap-2 mb-6">
+    <%= link_to "All", admin_games_path,
+        class: "px-4 py-2 rounded-lg transition #{params[:status].blank? ? 'bg-violet-500 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}" %>
+    <% Game.statuses.keys.each do |status| %>
+      <%= link_to status.capitalize, admin_games_path(status: status),
+          class: "px-4 py-2 rounded-lg transition #{params[:status] == status ? 'bg-violet-500 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}" %>
+    <% end %>
+  </div>
+
+  <%# Games Table %>
+  <div class="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
+    <table class="w-full">
+      <thead class="bg-slate-900/50">
+        <tr>
+          <th class="px-6 py-4 text-left text-sm font-medium text-slate-400">Game</th>
+          <th class="px-6 py-4 text-left text-sm font-medium text-slate-400">Creator</th>
+          <th class="px-6 py-4 text-left text-sm font-medium text-slate-400">Status</th>
+          <th class="px-6 py-4 text-left text-sm font-medium text-slate-400">Reports</th>
+          <th class="px-6 py-4 text-left text-sm font-medium text-slate-400">Created</th>
+          <th class="px-6 py-4 text-right text-sm font-medium text-slate-400">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-700">
+        <% @games.each do |game| %>
+          <tr class="hover:bg-slate-700/30 transition">
+            <td class="px-6 py-4">
+              <div class="font-medium text-white"><%= game.title %></div>
+              <div class="text-sm text-slate-400">
+                <%= game.game_type %> • Difficulty <%= game.difficulty %>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-slate-300">
+              <%= game.creator&.username || "Anonymous" %>
+            </td>
+            <td class="px-6 py-4">
+              <span class="px-2 py-1 text-xs rounded-full
+                <%= case game.status
+                    when 'approved' then 'bg-emerald-500/20 text-emerald-400'
+                    when 'pending' then 'bg-amber-500/20 text-amber-400'
+                    when 'rejected' then 'bg-rose-500/20 text-rose-400'
+                    when 'archived' then 'bg-slate-500/20 text-slate-400'
+                    when 'trial' then 'bg-blue-500/20 text-blue-400'
+                    else 'bg-slate-500/20 text-slate-400'
+                    end %>">
+                <%= game.status %>
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              <% if game.reports_count.to_i > 0 %>
+                <span class="text-rose-400 font-medium"><%= game.reports_count %></span>
+              <% else %>
+                <span class="text-slate-500">0</span>
+              <% end %>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-400">
+              <%= game.created_at.strftime("%b %d, %Y") %>
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex items-center justify-end gap-2">
+                <%= link_to game_path(game.slug), target: "_blank", class: "p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition", title: "View" do %>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                <% end %>
+
+                <% unless game.status_approved? %>
+                  <%= button_to approve_admin_game_path(game), method: :post, class: "p-2 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20 rounded-lg transition", title: "Approve" do %>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                  <% end %>
+                <% end %>
+
+                <% unless game.status_rejected? || game.status_archived? %>
+                  <%= button_to reject_admin_game_path(game), method: :post, class: "p-2 text-amber-400 hover:text-amber-300 hover:bg-amber-500/20 rounded-lg transition", title: "Reject" do %>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                    </svg>
+                  <% end %>
+                <% end %>
+
+                <%= button_to admin_game_path(game), method: :delete, data: { turbo_confirm: "Delete '#{game.title}' permanently?" }, class: "p-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/20 rounded-lg transition", title: "Delete" do %>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <% if @games.empty? %>
+      <div class="px-6 py-12 text-center text-slate-500">
+        No games found
+      </div>
+    <% end %>
+  </div>
+</div>

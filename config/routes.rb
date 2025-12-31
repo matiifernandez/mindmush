@@ -24,6 +24,23 @@ Rails.application.routes.draw do
   get "generator", to: 'generator#new'
   post "generator/preview", to: 'generator#preview'
   post "generator/create", to: 'generator#create'
+
+  # Admin
+  namespace :admin do
+    get "/", to: "dashboard#index", as: :dashboard
+    resources :games, only: [:index, :update, :destroy] do
+      member do
+        post :approve
+        post :reject
+      end
+    end
+    resources :reports, only: [:index, :update] do
+      member do
+        post :dismiss
+        post :action_taken
+      end
+    end
+  end
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
