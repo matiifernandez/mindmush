@@ -5,6 +5,9 @@ Rails.application.routes.draw do
   get "profile", to: "profiles#show", as: :my_profile
   get "u/:username", to: "profiles#show", as: :user_profile
 
+  # Global Leaderboard
+  get "leaderboard", to: "leaderboards#index", as: :leaderboards
+
   root "pages#home"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

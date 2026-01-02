@@ -47,9 +47,11 @@
         <div class="text-slate-400 text-sm font-medium mt-1">Players</div>
       </div>
       <div class="text-center p-6 rounded-2xl bg-slate-800/50 border border-slate-700/50">
-        <div class="text-4xl mb-2">🏆</div>
-        <div class="text-3xl font-bold text-emerald-400"><%= number_with_delimiter(GameSession.count) %></div>
-        <div class="text-slate-400 text-sm font-medium mt-1">Games Played</div>
+        <%= link_to leaderboards_path, class: "block h-full" do %>
+          <div class="text-4xl mb-2">🏆</div>
+          <div class="text-3xl font-bold text-emerald-400">Leaderboard</div>
+          <div class="text-slate-400 text-sm font-medium mt-1">Global Rankings</div>
+        <% end %>
       </div>
     </div>
   </div>

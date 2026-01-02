@@ -1,0 +1,28 @@
+<div class="container mx-auto px-4 py-10">
+  <h1 class="text-3xl font-bold text-slate-100 mb-8 text-center">🏆 Global Leaderboard</h1>
+
+  <% if @leaderboard_users.any? %>
+    <ol class="space-y-3 max-w-2xl mx-auto">
+      <% @leaderboard_users.each_with_index do |user, index| %>
+        <li class="flex items-center justify-between p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
+          <div class="flex items-center gap-4">
+            <span class="text-lg font-bold text-slate-400 w-6 text-center">
+              <%= index + 1 %>
+            </span>
+            <%= link_to user_profile_path(user.username), class: "font-semibold text-slate-200 hover:text-rose-400" do %>
+              <%= user.username %>
+            <% end %>
+          </div>
+          <span class="font-bold text-rose-400">
+            <%= number_with_delimiter(user.total_score) %> points
+          </span>
+        </li>
+      <% end %>
+    </ol>
+  <% else %>
+    <div class="text-center py-16 bg-slate-800/30 rounded-2xl border border-slate-700/50">
+      <div class="text-5xl mb-4">😔</div>
+      <p class="text-slate-400 text-lg mb-6">No players on the leaderboard yet. Be the first to play a game!</p>
+    </div>
+  <% end %>
+</div>
